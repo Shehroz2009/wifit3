@@ -13,6 +13,10 @@ live in each chip's `<CHIP>.md` (linked under its table).
 - **Stress**: 30-min channel-hopping soak, only tracks RX degradation over time.
 - **Grade**: summary/rollup of the above metrics as a final letter grade.
 
+**Android (Termux):** the cards below are the ones to use with wifit3 in Termux on Android over USB OTG.
+Install steps are in the [README](../README.md#option-3-android-termux). Android does not give the app
+direct USB access, so the USB enumeration and driver behavior may differ from desktop.
+
 ## Matrix
 
 | Chipset | RX | TX | ACKs | Port | Stress | Grade |

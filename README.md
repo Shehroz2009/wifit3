@@ -95,7 +95,20 @@ uv sync
 uv run wifit3
 ```
 
-### Option 3: Build your own binary
+### Option 3: Android (Termux)
+Almost the whole app runs in [Termux](https://termux.dev) on Android. Only hardware access is
+limited by Android, so use an adapter from the [Supported Hardware Doc](docs/SUPPORTED-HARDWARE.md)
+plugged in over USB OTG.
+```bash
+pkg install python git
+git clone https://github.com/shehroz2009/wifit3.git
+cd wifit3
+pip install .
+wifit3
+```
+On first launch wifit3 installs the Termux dependencies it needs (`termux-api` and `libusb`) through `pkg`.
+
+### Option 4: Build your own binary
 ```bash
 uv run pyinstaller wifit3.spec --noconfirm --clean
 ```
