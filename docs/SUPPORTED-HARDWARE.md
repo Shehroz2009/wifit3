@@ -43,6 +43,7 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 | [RTL8187L](#rtl8187l) | ✅ | ✅ | ⚠️ | ✅ | ✅ | C |
 | [RTL8814AU](#rtl8814au) | ❌ | ✅ | ✅ | ⚠️ | ✅ | D |
 | [RT2500USB](#rt2500usb) | ⚠️ | ✅ | ❌ | ✅ | ⚠️ | D |
+| [RTL8192CU](#rtl8192cu) | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ |
 
 ## Atheros Chipset
 ### AR9271
@@ -94,8 +95,7 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 > Mercusys MW150US (`2c4e:0102`) is stable in current use.
 
 > Ported from the [aircrack-ng/rtl8188eus](https://github.com/aircrack-ng/rtl8188eus) vendor/DKMS
-> port. There is a separate (weaker) port for the mainline kernel v6.18 driver (opt-in via
-> `WIFIT3_RTL8188=mainline`), but the default DKMS port out-performs mainline (as expected).
+> port.
 
 | Capability | Status | Date | Notes |
 |---|:--:|---|---|
@@ -109,7 +109,7 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 | ACKs | ✅ | 2026-10-27 | Auto-ACK forged MAC via active monitor (Addr2-keyed). |
 | Stress | ✅ | 2026-10-27 | 30-min soak, flat (trend 1.00). |
 
-→ [RTL8188EUS_DKMS.md](../src/wifit3/chips/rtl8188eus_dkms/RTL8188EUS_DKMS.md) (default) · [RTL8188EUS.md](../src/wifit3/chips/rtl8188eus/RTL8188EUS.md) (mainline)
+→ [RTL8188EUS_DKMS.md](../src/wifit3/chips/rtl8188eus_dkms/RTL8188EUS_DKMS.md)
 
 ### RTL8188FTV
 *No-name 0bda:f179 dongle · 2.4 GHz · 1T1R*
@@ -130,6 +130,25 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 | Stress | ✅ | 2026-11-02 | 20-min 13-ch soak, OK (trend 1.20), 0 USB errors. |
 
 → [RTL8188FTV_DKMS.md](../src/wifit3/chips/rtl8188ftv_dkms/RTL8188FTV_DKMS.md)
+
+### RTL8192CU
+
+*TP-Link TL-WN823N v1 (`0bda:8178`) · 2.4 GHz*
+
+> Ported from the mainline Linux `rtlwifi` driver (`rtl8192cu/`, `rtl8192c/`, `usb.c`), Linux v6.12.107.
+> **No card in hand.** RX and TX are user-reported; nothing below is measured.
+
+| Capability | Status | Date | Notes |
+|---|:--:|---|---|
+| **Grade** | **ungraded** | 2026-11-11 | No card in hand: no RX, TX, ACK or soak measurement to score. |
+| RX | ✅ | 2026-11-08 | User-reported on both VID:PIDs ([#71](https://github.com/derv82/wifit3/issues/71), [#127](https://github.com/derv82/wifit3/issues/127)). |
+| Port | ⬜ | | No Linux baseline; register-level fidelity only (verify_pcap). |
+| TX | ✅ | 2026-11-11 | User-reported: deauth → `.hc22000` ([#127](https://github.com/derv82/wifit3/issues/127)). |
+| Handshake / PMKID / WEP / WPS | ⬜ | | |
+| ACKs | ⬜ | | Active monitor (MSR infra + REG_MACID) ported; untried. |
+| Stress | ⬜ | | |
+
+→ [RTL8192CU.md](../src/wifit3/chips/rtl8192cu/RTL8192CU.md)
 
 ### RTL8192FU
 <img align="right" width="140" src="../assets/cardart/card-dlink-an3u-n300.png" alt="D-Link AN3U rev. A1">
@@ -158,15 +177,13 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 
 *ALFA AWUS036ACH · 2.4 / 5 GHz*
 
-> **Default = vendor/DKMS port** (table below). `WIFIT3_RTL8812=mainline` opts back. But mainline
-> **wedges on 2.4↔5 GHz hopping** (RF synth loses lock; confirmed 2026-07-07, ch153/161 dropped), so
-> it's fixed-channel only. DKMS hops clean. *(The DKMS driver won't compile on kernel 6.19, so the
+> DKMS hops 2.4↔5 GHz clean. *(The DKMS driver won't compile on kernel 6.19, so the
 > same-driver Port baseline couldn't be re-run fresh. Port ✅ is vs the prior linux-DKMS + a clean
 > live dual-band hop.)*
 
 | Capability | Status | Date | Notes |
 |---|:--:|---|---|
-| **Grade** | **91% (A)** | 2026-07-25 | Clean dual-band DKMS default, full attack suite; mainline-wedge is opt-in only. |
+| **Grade** | **91% (A)** | 2026-07-25 | Clean dual-band DKMS port, full attack suite. |
 | RX | ✅ | 2026-07-07 | DKMS ref2g 6.4/s, ref5g 9.2/s, breadth 91/40; no wedge on the dual-band hop. |
 | Port | ✅ | 2026-07-07 | Clean dual-band hop; same-driver baseline stale (6.19 build fails). See note. |
 | TX | ✅ | 2026-07-25 | Client drop + reconnect caught. |
@@ -177,7 +194,7 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 | ACKs | ✅ | 2026-07-25 | HW-ACK forged MAC (WPS/PMKID). |
 | Stress | ✅ | 2026-07-29 | 30-min 22-ch dual-band soak, flat (trend 1.08). |
 
-→ [RTL8812AU_DKMS.md](../src/wifit3/chips/rtl8812au_dkms/RTL8812AU_DKMS.md) (default) · [RTL8812AU.md](../src/wifit3/chips/rtl8812au/RTL8812AU.md) (mainline)
+→ [RTL8812AU_DKMS.md](../src/wifit3/chips/rtl8812au_dkms/RTL8812AU_DKMS.md)
 
 ### RTL8814AU
 <img align="right" width="140" src="../assets/cardart/stack-rtl8814au.png" alt="ALFA AWUS1900 (top) / ASUS USB-AC68 (bottom)">
@@ -187,8 +204,6 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 > The maintainer of the DKMS driver says Realtek's support for this driver is subpar, that the
 > driver itself is not good, and advises not using cards that rely on this driver
 > ([morrownr/8814au#37](https://github.com/morrownr/8814au/issues/37#issuecomment-900581613)).
-
-> **Default = vendor/DKMS port.** `WIFIT3_RTL8814=mainline` opts back.
 
 | Capability | Status | Date | Notes |
 |---|:--:|---|---|
@@ -202,20 +217,18 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 | ACKs | ✅ | 2026-07-25 | Auto-ACK forged MAC via active monitor (Addr2-keyed). |
 | Stress | ✅ | 2026-07-29 | 30-min 22-ch flat (trend 1.04). Continuous hopping avoids wedge. |
 
-→ [RTL8814AU.md](../src/wifit3/chips/rtw88_8814au/RTL8814AU.md) (mainline) · [RTL8814AU_DKMS.md](../src/wifit3/chips/rtl8814au_dkms/RTL8814AU_DKMS.md) (default)
+→ [RTL8814AU_DKMS.md](../src/wifit3/chips/rtl8814au_dkms/RTL8814AU_DKMS.md)
 
 ### RTL8821AU
 <img align="right" width="110" src="../assets/cardart/stack-rtl8821au.png" alt="ALFA AWUS036ACS (top) / Archer T2U+ (middle) / Archer T2U (bottom)">
 
 *ALFA AWUS036ACS / Archer T2U+ / Archer T2U · 2.4 / 5 GHz*
 
-> **Default = vendor/DKMS port** (table below). `WIFIT3_RTL8821=mainline` opts back.
-
 | Capability | Status | Date | Notes |
 |---|:--:|---|---|
 | **Grade** | **91% (A)** | 2026-07-25 | Clean dual-band on both variants, full attack suite, no wedge. |
-| RX | ✅ | 2026-07-07 | DKMS ref2g 7.0/7.8 (90%), ref5g 9.3/9.6 (97%), breadth 66/31; mainline 91% too. |
-| Port | ✅ | 2026-07-07 | Matches linux both bands, DKMS + mainline. |
+| RX | ✅ | 2026-07-07 | DKMS ref2g 7.0/7.8 (90%), ref5g 9.3/9.6 (97%), breadth 66/31. |
+| Port | ✅ | 2026-07-07 | Matches linux both bands. |
 | Handshake | ✅ | 2026-07-25 | Deauth → 4-way. |
 | PMKID | ✅ | 2026-07-25 | Passive + active. |
 | WEP | ✅ | 2026-07-25 | Replay + ChopChop. |
@@ -223,7 +236,7 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 | ACKs | ✅ | 2026-07-25 | HW-ACK forged MAC (WPS/PMKID). |
 | Stress | ✅ | 2026-07-30 | 30-min 22-ch dual-band soak, flat (trend 1.03). |
 
-→ [RTL8821AU.md](../src/wifit3/chips/rtl8821au/RTL8821AU.md) (mainline) · [RTL8821AU_DKMS.md](../src/wifit3/chips/rtl8821au_dkms/RTL8821AU_DKMS.md) (default)
+→ [RTL8821AU_DKMS.md](../src/wifit3/chips/rtl8821au_dkms/RTL8821AU_DKMS.md)
 
 ### RTL8821CU
 <img align="right" width="140" height="160" src="../assets/cardart/card-auscomer600.png" alt="Auscoumer 600">
@@ -249,8 +262,6 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 
 *TP-Link Archer T3U Plus v1 / Archer T4U v3 / T4U+ · 2.4 / 5 GHz*
 
-> **Default = vendor/DKMS port** (table below). `WIFIT3_RTL8822=mainline` opts back.
-
 | Capability | Status | Date | Notes |
 |---|:--:|---|---|
 | **Grade** | **90% (A)** | 2026-07-25 | Dual-band kernel-parity RX + full attack suite. |
@@ -264,7 +275,7 @@ direct USB access, so the USB enumeration and driver behavior may differ from de
 | ACKs | ✅ | 2026-07-25 | Auto-ACK forged MAC via active monitor (spoofed + silicon). |
 | Stress | ✅ | 2026-07-30 | 30-min 22-ch soak, flat (trend 0.94, no death-detect). |
 
-→ [RTL8822BU_DKMS.md](../src/wifit3/chips/rtl8822bu_dkms/RTL8822BU_DKMS.md) (default) · [RTL8822BU.md](../src/wifit3/chips/rtl8822bu/RTL8822BU.md) (mainline)
+→ [RTL8822BU_DKMS.md](../src/wifit3/chips/rtl8822bu_dkms/RTL8822BU_DKMS.md)
 
 ### RTL8822CU
 
@@ -486,7 +497,7 @@ Excellent 2.4 GHz front-end (external LNA): strong range, signal, and TX rate.
 | ACKs | ✅ | 2026-07-25 | WPS PIN/PBC → auto-ACK. |
 | Stress | ✅ | 2026-07-30 | 30-min 14-ch soak, flat (PAU05 1.13, PAU06 0.91). |
 
-→ [RT5372.md](../src/wifit3/chips/rt5372/RT5372.md) (default) · [RT2800USB.md](../src/wifit3/chips/rt2800usb/RT2800USB.md) (rt2800usb fallback)
+→ [RT5372.md](../src/wifit3/chips/rt5372/RT5372.md) 
 
 ### RT5572
 <img align="right" width="140" height="160" src="../assets/cardart/card-pau09n600.png" alt="Panda PAU09 N600">
@@ -518,7 +529,7 @@ Excellent 2.4 GHz front-end (external LNA): strong range, signal, and TX rate.
 Our only unit (bought 2015) has a blank EFUSE (no factory RF calibration), so it can't
 validate the chip.
 
-→ [RT2800USB.md](../src/wifit3/chips/rt2800usb/RT2800USB.md)
+→ [RT3572.md](../src/wifit3/chips/rt3572/RT3572.md)
 
 ## Stress soak
 
@@ -537,5 +548,5 @@ Kali: <https://github.com/morrownr/USB-WiFi/blob/main/home/Recommended_Adapters_
 
 **Wishlist (not yet bought):**
 
-- **TP-Link TL-WN823N**:  RTL8192CU [Issue#71](https://github.com/derv82/wifit3/issues/71) (new port)
+- **TP-Link TL-WN823N v1**:  RTL8192CU [Issue#71](https://github.com/derv82/wifit3/issues/71) (new port)
 - **Asus USB-AC68**: RTL8814AU [Issue#86](https://github.com/derv82/wifit3/issues/86) ("for the art")
